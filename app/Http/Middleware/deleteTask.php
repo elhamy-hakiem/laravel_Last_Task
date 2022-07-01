@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class deleteTask
 {
@@ -16,7 +18,19 @@ class deleteTask
      */
     public function handle(Request $request, Closure $next)
     {
-        
-        return $next($request);
+        $task =   DB :: table('tasks')->find($request->id);
+        $dateExpire = date('Y-m-d',$task->endDate);
+        $date       = date('Y-m-d',Carbon::now()->timestamp);
+
+        if($dateExpire < $date)
+        {
+            return $next($request);
+        }
+        else
+        {
+            $message = "Task Not Removed The End Time Expired";
+            session()->flash('Message-error', $message);
+            return back();
+        }
     }
 }

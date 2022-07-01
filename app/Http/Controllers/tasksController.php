@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\task;
-use Carbon\Carbon;
+
 
 class tasksController extends Controller
 {
@@ -18,7 +18,6 @@ class tasksController extends Controller
         //
         $userId = auth()->user()->id ;
         $tasks = task::where('addedBy',$userId)->get();
-
         return view('tasks.index', ['tasksData' => $tasks]);
     }
 
@@ -45,6 +44,8 @@ class tasksController extends Controller
         $newImageName = md5(rand(0,100000)).'.'.$image->getClientOriginalExtension();
         $image->move(public_path("images/tasks"),$newImageName);
         $taskData['image'] =$newImageName;
+        $taskData['startDate'] = strtotime($taskData['startDate']);
+        $taskData['endDate'] = strtotime($taskData['endDate']);
         $taskData['addedBy'] = $userId;
 
         $op =  task :: create($taskData);
@@ -66,33 +67,20 @@ class tasksController extends Controller
     {
         // code . . .
         $userId = auth()->user()->id ;
-        $date = date('Y-m-d',Carbon::now()->timestamp);
-
         # Fetch User Data . . .
         $task = task::find($request->id);
-        $endDate =$task['endDate'];
-        if($endDate < $date)
+        $op =   task::where('id', $request->id)->where('addedBy',$userId)->delete();
+        if($op)
         {
-            $op =   task::where('id', $request->id)->where('addedBy',$userId)->delete();
-            if ($op) {
-
-                # Remove image . . .
-                unlink(public_path('images/tasks/' . $task->image));
-
-                $message = "Task Removed Successfully";
-                session()->flash('Message-success', $message);
-            } else {
-                $message = "Task Not Removed";
-                session()->flash('Message-error', $message);
-            }
-        }
-        else
+            # Remove image . . .
+            unlink(public_path('images/tasks/' . $task->image));
+            $message = "Task Removed Successfully";
+            session()->flash('Message-success', $message);
+        } else
         {
-            $message = "Task Not Removed The End Date Is Expired";
+            $message = "Task Not Removed";
             session()->flash('Message-error', $message);
         }
-
-
 
         return redirect(url('Tasks'));
     }

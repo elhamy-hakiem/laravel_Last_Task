@@ -67,10 +67,9 @@
                     <td>{{ $task->id }}</td>
                     <td>{{ $task->title }}</td>
                     <td>{{ $task->content }}</td>
-                    <td>{{ date('Y-m-d', (int)$task->startDate)}}</td>
-                    <td>{{ date('Y-m-d', (int)$task->endDate)}}</td>
                     <td><img src="{{ url('images/tasks/' . $task->image) }}" width="80px" height="80px"></td>
-
+                    <td>{{ date('Y-m-d',$task->startDate)}}</td>
+                    <td>{{ date('Y-m-d',$task->endDate)}}</td>
                     <td>
                         <a href='{{url('Tasks/Delete/'.$task->id)}}' class='btn btn-danger m-r-1em'>Delete</a>
                         <a href='' class='btn btn-primary m-r-1em'>Edit</a>

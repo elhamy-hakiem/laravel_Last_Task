@@ -27,7 +27,7 @@ Route :: post('Users/Store',[userController :: class , 'store']);
 Route :: get('Tasks',[tasksController :: class , 'index']);
 Route :: get('Tasks/Create',[tasksController :: class , 'create']);
 Route :: post('Tasks/Store',[tasksController :: class , 'store']);
-Route :: get('Tasks/Delete/{id}',[tasksController :: class , 'delete']);
+Route :: get('Tasks/Delete/{id}',[tasksController :: class , 'delete'])->middleware('deleteTask');
 ###############################################################################################################
 
 // AUTH ROUTES . . .
